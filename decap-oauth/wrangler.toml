@@ -1,6 +1,9 @@
 name = "jeff-decap-oauth"
 main = "worker.js"
-compatibility_date = "2024-09-23"
+compatibility_date = "2025-06-01"
+
+# 前置：首次部署前需认领 workers.dev 子域（Dashboard → Workers & Pages → 你的子域），
+# 否则 `wrangler deploy` 会报 "register a workers.dev subdomain"。
 
 # Set these via `wrangler secret put` (do NOT commit secrets):
 #   wrangler secret put GITHUB_CLIENT_ID
