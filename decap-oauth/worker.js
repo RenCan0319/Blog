@@ -13,11 +13,14 @@
  *
  * Security note: we issue a random `state` per auth request, store it in an
  * HttpOnly cookie, and require it to match on the callback (CSRF protection).
+ *
+ * Callback flow: we return a small HTML page that uses window.postMessage
+ * to hand the access token back to Decap CMS. This is the protocol Decap
+ * expects for custom GitHub OAuth providers (not a redirect-with-hash).
  */
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const CMS_BASE = env.CMS_BASE || '';
     const cookie = request.headers.get('Cookie') || '';
     const readState = () => (cookie.match(/decap_state=([^;]+)/) || [])[1];
 
@@ -39,7 +42,7 @@ export default {
       });
     }
 
-    // Step 2: GitHub calls back with a code; exchange for a token, then hand off to CMS
+    // Step 2: GitHub calls back with a code; exchange for a token
     if (url.pathname === '/callback') {
       const code = url.searchParams.get('code');
       const stateParam = url.searchParams.get('state');
@@ -62,10 +65,43 @@ export default {
       const access = tok.access_token;
       if (!access) return new Response('Token exchange failed', { status: 400 });
 
-      return new Response(null, {
-        status: 302,
+      // Decap CMS expects the popup to postMessage the token back to opener.
+      // Message format: authorization:github:success:{"token":"gho_..."}
+      const payload = JSON.stringify({ token: access });
+      const authMessage = `authorization:github:success:${payload}`;
+      const html = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub 授权中…</title>
+  <script>
+    (function () {
+      var authMessage = ${JSON.stringify(authMessage)};
+      function receiveMessage(e) {
+        if (window.opener) {
+          window.opener.postMessage(authMessage, '*');
+        }
+        window.removeEventListener('message', receiveMessage, false);
+      }
+      window.addEventListener('message', receiveMessage, false);
+      if (window.opener) {
+        window.opener.postMessage('authorizing:github', '*');
+      } else {
+        document.body.innerHTML = '<p>授权失败：找不到打开此窗口的 Decap CMS 页面，请关闭后重试。</p>';
+      }
+    })();
+  </script>
+</head>
+<body>
+  <p>正在完成 GitHub 授权，请稍候…</p>
+</body>
+</html>`;
+
+      return new Response(html, {
+        status: 200,
         headers: {
-          'Location': `${CMS_BASE}/admin/#/access_token=${access}`,
+          'Content-Type': 'text/html; charset=utf-8',
           'Set-Cookie': `decap_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`,
         },
       });
