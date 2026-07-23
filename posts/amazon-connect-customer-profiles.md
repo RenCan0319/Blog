@@ -1,5 +1,5 @@
 ---
-title: Amazon Connect Customer Profiles 入门：统一你的客户视图 Brtty是傻逼
+title: Amazon Connect Customer Profiles 入门：统一你的客户视图
 date: 2026-07-11
 category: Amazon Connect
 cover: /assets/img/amazon-connect.jpg
