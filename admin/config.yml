@@ -32,6 +32,5 @@ collections:
       - { name: excerpt, label: 摘要, widget: text }
       - name: body
         label: 正文
-        widget: rich-text
-        allow_blank: true
-        # 用 <h2> 划分板块；构建脚本会自动生成目录与编号
+        widget: markdown
+        # 用 ## 二级标题划分板块；build.js 会转成 HTML 并自动生成目录与编号
