@@ -3,6 +3,15 @@
 Apple 风格的个人博客（纯静态），文章聚焦 **Zendesk / Amazon Connect Customer Profiles / 随想 / 工程笔记**。
 支持分板块长文、按主题浏览、暗色模式，并内置 **Decap CMS** 作为内容后台。
 
+## 内容如何同步到 Git 与上线
+
+两条路径，最终都靠 **GitHub 上的 commit 触发 Cloudflare 自动构建部署**：
+
+- **写文章（后台）**：打开 `/admin` → 登录 GitHub → 写文 → 点 **Publish**。Decap 会用你的 GitHub 身份调用 API，把文章写成 `posts/*.md` **自动提交到 `main` 分支**，随即触发 Cloudflare 重新构建并上线。你只需点一下 Publish，无需手敲 git。
+- **改代码（手动）**：改 `index.template.html` / `posts/*.md` / 样式等，然后 `git add -A && git commit && git push`，同样自动重新部署。
+
+> Git 里存的是"源"（模板 + Markdown + 资源 + 配置）；生成的 HTML（`index.html`、`archive.html`、`category/`、`posts/*.html`）被 `.gitignore` 忽略，是 Cloudflare 云端 `node build.js` 现生成的——所以仓库里看不到它们，但访问站点永远是最新的。
+
 ## 技术栈
 
 - 纯 HTML + CSS + 原生 JS（无前端框架、无运行时依赖）
