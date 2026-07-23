@@ -1,0 +1,5 @@
+name = "jeff-blog"
+compatibility_date = "2024-09-23"
+# Cloudflare Pages: static site, no build step.
+# Deploy with:  wrangler pages deploy .
+pages_build_output_dir = "."

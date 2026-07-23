@@ -1,0 +1,37 @@
+# Decap CMS configuration
+# Docs: https://decapcms.org/docs/configuration-options/
+# Auth is handled by a small Cloudflare Worker OAuth provider (see decap-oauth/).
+
+backend:
+  name: github
+  repo: YOUR_GITHUB_USERNAME/jeff-blog   # ← 改成你的 GitHub 仓库
+  branch: main
+  base_url: https://jeff-decap-oauth.workers.dev   # ← 改成你的 OAuth Worker 地址
+  auth_scope: repo
+
+# Media (images) are stored in assets/img and served at /assets/img
+media_folder: assets/img
+public_folder: /assets/img
+
+collections:
+  - name: posts
+    label: 文章
+    label_singular: 文章
+    folder: posts
+    slug: "{{slug}}"
+    format: md
+    summary: "{{title}} · {{category}}"
+    fields:
+      - { name: title, label: 标题, widget: string }
+      - { name: date, label: 发布日期, widget: datetime }
+      - name: category
+        label: 分类
+        widget: select
+        options: [Zendesk, Amazon Connect, 随想, 工程笔记]
+      - { name: cover, label: 封面图, widget: image }
+      - { name: excerpt, label: 摘要, widget: text }
+      - name: body
+        label: 正文
+        widget: rich-text
+        allow_blank: true
+        # 用 <h2> 划分板块；构建脚本会自动生成目录与编号
