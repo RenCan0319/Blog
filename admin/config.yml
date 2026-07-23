@@ -20,14 +20,13 @@ collections:
     folder: posts
     slug: "{{slug}}"
     format: md
-    summary: "{{title}} · {{category}}"
     fields:
       - { name: title, label: 标题, widget: string }
       - { name: date, label: 发布日期, widget: datetime }
       - name: category
         label: 分类
         widget: select
-        options: [Zendesk, Amazon Connect, 随想, 工程笔记]
+        options: ["Zendesk", "Amazon Connect", "随想", "工程笔记"]
       - { name: cover, label: 封面图, widget: image }
       - { name: excerpt, label: 摘要, widget: text }
       - name: body
