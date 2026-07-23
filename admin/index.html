@@ -32,6 +32,8 @@
             slug: "{{slug}}",
             extension: "md",
             format: "yaml-frontmatter",
+            create: true,
+            delete: true,
             fields: [
               { name: "title", label: "标题", widget: "string" },
               { name: "date", label: "发布日期", widget: "date", format: "YYYY-MM-DD" },
