@@ -170,25 +170,27 @@ ${cards}
         <a href="../about.html" class="nav-link">关于</a>
       </nav>
       <div class="nav-right">
-        <button class="theme-toggle" id="themeToggle" aria-label="切换主题">🌙</button>
+        <button class="theme-toggle" id="themeToggle" aria-label="切换深浅色">🌙</button>
         <button class="nav-burger" id="navBurger" aria-label="菜单">☰</button>
       </div>
     </div>
   </header>
 
   <article class="section-sm container read-col">
-    <a href="../index.html#writing" class="nav-link" style="display:inline-block;margin-bottom:24px">← 返回文章</a>
-    <span class="badge">${cat}</span>
-    <h1 style="margin-top:14px">${a.title || ''}</h1>
-    <div class="post-meta mt-16">
-      <span class="avatar">${avatar}</span>
-      <span>${author} · ${date} · ${mins} 分钟阅读</span>
+    <a href="../index.html#writing" class="nav-link reveal" style="display:inline-block;margin-bottom:24px">← 返回文章</a>
+    <div class="reveal">
+      <span class="badge">${cat}</span>
+      <h1 style="margin-top:14px;font-family:var(--font-serif)">${a.title || ''}</h1>
+      <div class="post-meta mt-16">
+        <span class="avatar">${avatar}</span>
+        <span>${author} · ${date} · ${mins} 分钟阅读</span>
+      </div>
     </div>
-    <img class="post-cover" src="${coverSrc}" alt="${a.title || ''}" loading="lazy" />
-    <div class="post-body">${bodyHtml}</div>
-    <div class="post-tags"><span class="badge">${cat}</span></div>
+    <img class="post-cover reveal" src="${coverSrc}" alt="${a.title || ''}" loading="lazy" />
+    <div class="post-body reveal">${bodyHtml}</div>
+    <div class="post-tags reveal"><span class="badge">${cat}</span></div>
     <hr class="divider mt-40 mb-24" />
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between reveal">
       <div class="post-meta"><span class="avatar">${avatar}</span><span>${author}</span></div>
       <div class="flex gap-8">
         <button class="btn btn-secondary" onclick="sharePost()">分享</button>
@@ -201,7 +203,7 @@ ${relatedHtml}
   <footer class="footer band">
     <div class="container">
       <div class="footer-bottom" style="border:0;margin-top:0">
-        <span>© 2026 Jeff. 用 ☕ 与系统字体搭建。</span>
+        <span>© 2026 Jeff. 用心写，慢慢更。</span>
         <button class="to-top" id="toTop" aria-label="回到顶部">↑</button>
       </div>
     </div>
@@ -210,7 +212,7 @@ ${relatedHtml}
   <div class="modal-overlay" id="shareModal" style="display:none">
     <div class="modal" role="dialog" aria-modal="true">
       <h3>分享这篇文章</h3>
-      <p class="text-muted">复制链接，或选择你常用的平台。</p>
+      <p class="text-muted">复制下面的链接，发给想看的人。</p>
       <div class="field-row mt-16">
         <input class="input" id="shareUrl" value="https://employless.cc.cd/posts/${slug}.html" readonly />
         <button class="btn btn-primary" onclick="copyShare()">复制</button>
