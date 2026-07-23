@@ -9,7 +9,7 @@ compatibility_date = "2025-06-01"
 #   Client ID（非机密）直接放在这里：
 [vars]
 GITHUB_CLIENT_ID = "Ov23li6srevqrtijVVsE"
-CMS_BASE = "https://your-live-site.example.com"   # ← 改成你的 Pages 地址或自定义域名（Decap 后台所在地址）
+CMS_BASE = "https://employless.cc.cd"   # ← 你的 Pages 自定义域名（Decap 后台所在地址）
 
 # Client Secret（机密）请用 secret 注入，切勿写进仓库：
 #   npx wrangler secret put GITHUB_CLIENT_SECRET
