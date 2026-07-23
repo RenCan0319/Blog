@@ -134,13 +134,13 @@ h4 { font-size: 19px; line-height: 1.30; }
 
 /* ---------- Cards ---------- */
 .card { background: var(--color-surface); border: 1px solid var(--color-border);
-  border-radius: var(--radius-card); overflow: hidden;
+  border-radius: var(--radius-card); overflow: hidden; display: flex; flex-direction: column;
   box-shadow: var(--shadow-xs), 0 6px 18px rgba(0,0,0,.05);
   transition: transform .25s ease, box-shadow .25s ease; }
 .card:hover { transform: translateY(-4px);
   box-shadow: var(--shadow-sm), 0 14px 36px rgba(0,0,0,.09); }
-.card-cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
-.card-body { padding: 24px; }
+.card-cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--color-surface-alt); }
+.card-body { padding: 24px; display: flex; flex-direction: column; }
 .card-title { margin: 10px 0 8px; }
 .card-excerpt { color: var(--color-ink-soft); font-size: 15px; }
 
@@ -209,6 +209,9 @@ h4 { font-size: 19px; line-height: 1.30; }
 .post-body h2 { margin: 44px 0 16px; color: var(--color-ink); }
 .post-body h3 { margin: 32px 0 12px; color: var(--color-ink); }
 .post-body p { margin: 18px 0; }
+.post-body img { max-width: 100%; border-radius: var(--radius-input); margin: 24px 0; }
+.post-body ul, .post-body ol { margin: 18px 0; padding-left: 1.4em; }
+.post-body li { margin: 8px 0; }
 .post-body blockquote { border-left: 3px solid var(--color-accent); padding: 6px 0 6px 22px;
   margin: 24px 0; font-size: 22px; line-height: 1.45; color: var(--color-ink); font-weight: 500; }
 .post-body pre { background: var(--color-surface-alt); border: 1px solid var(--color-border);
