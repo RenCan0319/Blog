@@ -5,10 +5,10 @@
  * Env / Secrets:
  *   GITHUB_CLIENT_ID     — from your GitHub OAuth App
  *   GITHUB_CLIENT_SECRET — set as a secret: `wrangler secret put GITHUB_CLIENT_SECRET`
- *   CMS_BASE             — your live site URL, e.g. https://jeff.pages.dev
+ *   CMS_BASE             — your live site URL, e.g. https://employless.cc.cd
  *
  * GitHub OAuth App settings:
- *   Homepage URL:        https://jeff.pages.dev
+ *   Homepage URL:        https://employless.cc.cd
  *   Authorization callback URL: https://<worker-subdomain>.workers.dev/callback
  *
  * Security note: we issue a random `state` per auth request, store it in an
