@@ -1,5 +1,6 @@
 name = "jeff-blog"
 compatibility_date = "2024-09-23"
-# Cloudflare Pages: static site, no build step.
-# Deploy with:  wrangler pages deploy .
+# Cloudflare Pages 部署说明：
+#   - Git 集成：构建命令 `node build.js`，输出目录 `.`（见 README.md）
+#   - CLI 部署：先 `node build.js` 生成页面，再 `wrangler pages deploy .`
 pages_build_output_dir = "."
