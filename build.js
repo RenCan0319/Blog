@@ -201,7 +201,7 @@ ${relatedHtml}
       <h3>分享这篇文章</h3>
       <p class="text-muted">复制链接，或选择你常用的平台。</p>
       <div class="field-row mt-16">
-        <input class="input" id="shareUrl" value="https://jeff.pages.dev/posts/${slug}.html" readonly />
+        <input class="input" id="shareUrl" value="https://employless.cc.cd/posts/${slug}.html" readonly />
         <button class="btn btn-primary" onclick="copyShare()">复制</button>
       </div>
       <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">关闭</button></div>
