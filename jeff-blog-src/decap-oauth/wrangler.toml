@@ -1,9 +1,0 @@
-name = "jeff-decap-oauth"
-main = "worker.js"
-compatibility_date = "2024-09-23"
-
-# Set these via `wrangler secret put` (do NOT commit secrets):
-#   wrangler secret put GITHUB_CLIENT_ID
-#   wrangler secret put GITHUB_CLIENT_SECRET
-[vars]
-CMS_BASE = "https://jeff.pages.dev"   # ← 改成你的 Cloudflare Pages 地址

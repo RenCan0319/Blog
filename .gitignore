@@ -18,3 +18,4 @@ Thumbs.db
 # ===== 打包产物（非源码，不进仓库） =====
 jeff-blog-src.zip
 jeff-blog-src.tar.gz
+jeff-blog-src/
