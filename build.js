@@ -101,7 +101,9 @@ function readingMinutes(body) {
 function cardHtml(p, base) {
   const a = p.data;
   const cat = a.category || '笔记';
-  const cover = (a.cover || '').replace(/^\//, '');
+  const catSlug = CATEGORIES[cat] ? CATEGORIES[cat].slug : '';
+  let cover = (a.cover || '').replace(/^\//, '').trim();
+  if (!cover && catSlug) cover = `assets/img/${catSlug}.jpg`;
   const coverSrc = base + cover;
   const mins = readingMinutes(p.body);
   const href = base + 'posts/' + p.slug + '.html';
@@ -121,7 +123,9 @@ function renderPost(p, slug, allPosts) {
   const author = a.author || 'Jeff';
   const avatar = (author[0] || 'J').toUpperCase();
   const cat = a.category || '笔记';
-  const cover = (a.cover || '').replace(/^\//, '');
+  const catSlug = CATEGORIES[cat] ? CATEGORIES[cat].slug : '';
+  let cover = (a.cover || '').replace(/^\//, '').trim();
+  if (!cover && catSlug) cover = `assets/img/${catSlug}.jpg`;
   const coverSrc = '../' + cover;
   const date = fmtDate(a.date);
   const mins = readingMinutes(p.body);
