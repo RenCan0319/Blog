@@ -6,7 +6,7 @@ backend:
   name: github
   repo: RenCan0319/Blog   # ← 已改；base_url 仍需改为你的 OAuth Worker 地址
   branch: main
-  base_url: https://jeff-decap-oauth.workers.dev   # ← 改成你的 OAuth Worker 地址
+  base_url: https://jeff-decap-oauth.rcan9764.workers.dev   # ← OAuth Worker 地址（已部署）
   auth_scope: repo
 
 # Media (images) are stored in assets/img and served at /assets/img
