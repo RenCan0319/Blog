@@ -22,7 +22,7 @@ collections:
     format: "md"
     fields:
       - { name: "title", label: "标题", widget: "string" }
-      - { name: "date", label: "发布日期", widget: "datetime" }
+      - { name: "date", label: "发布日期", widget: "date", format: "YYYY-MM-DD" }
       - name: "category"
         label: "分类"
         widget: "select"
