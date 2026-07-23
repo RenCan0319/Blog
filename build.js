@@ -1,14 +1,19 @@
 /*
- * Jeff Blog — build.js  (zero dependencies, Node built-ins only)
+ * Jeff Blog — build.js
  * Reads posts/*.md (Decap CMS output) and generates:
  *   - posts/<slug>.html       (each article, with auto TOC + numbered sections + related)
  *   - index.html              (home: hero + topic cards + article grid)
  *   - category/<slug>.html    (one per category)
  *   - archive.html            (all posts)
  * Cloudflare Pages build command: `node build.js`
+ *
+ * Note: uses `marked` (listed in package.json dependencies) to turn Decap's
+ * markdown body into HTML. Existing posts that already contain HTML tags are
+ * passed through marked's parser, which preserves inline HTML.
  */
 const fs = require('fs');
 const path = require('path');
+const { marked } = require('marked');
 const ROOT = __dirname;
 const POSTS_DIR = path.join(ROOT, 'posts');
 const TPL = path.join(ROOT, 'index.template.html');
@@ -120,7 +125,9 @@ function renderPost(p, slug, allPosts) {
   const coverSrc = '../' + cover;
   const date = fmtDate(a.date);
   const mins = readingMinutes(p.body);
-  const { html, tocHtml } = buildSections(p.body);
+  // Decap CMS markdown body -> HTML; existing HTML-rich posts pass through.
+  const bodyProcessed = marked.parse(p.body || '');
+  const { html, tocHtml } = buildSections(bodyProcessed);
   const bodyHtml = tocHtml ? tocHtml + html : html;
 
   // Related: same category first; if none, fall back to latest other posts
