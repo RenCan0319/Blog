@@ -65,7 +65,7 @@ export default {
       return new Response(null, {
         status: 302,
         headers: {
-          'Location': `${CMS_BASE}/#/access_token=${access}`,
+          'Location': `${CMS_BASE}/admin/#/access_token=${access}`,
           'Set-Cookie': `decap_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`,
         },
       });
