@@ -1,0 +1,9 @@
+# Placeholder: Decap config is loaded inline from index.html.
+# This file exists only to satisfy Cloudflare Pages / stale-cache expectations.
+backend:
+  name: "github"
+  repo: "RenCan0319/Blog"
+  branch: "main"
+  base_url: "https://jeff-decap-oauth.rcan9764.workers.dev"
+  auth_scope: "repo"
+collections: []
