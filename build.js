@@ -14,6 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
+const crypto = require('crypto');
 const ROOT = __dirname;
 const POSTS_DIR = path.join(ROOT, 'posts');
 const TPL = path.join(ROOT, 'index.template.html');
@@ -29,6 +30,25 @@ const CATEGORIES = {
 
 const read = (f) => fs.readFileSync(f, 'utf8');
 const write = (f, c) => { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, c); };
+
+// ---- Cache-busting for static assets ----
+// /assets/* is served with `Cache-Control: immutable` (see _headers), so the
+// browser/CDN never revalidates a given URL. To make CSS/JS updates take effect,
+// we append a content hash as a query string (?v=...). When the file changes the
+// hash changes -> the URL changes -> clients fetch the new file; unchanged files
+// keep their year-long immutable cache.
+const ASSET_CSS = 'assets/css/styles.css';
+const ASSET_JS = 'assets/js/main.js';
+function assetHash(rel) {
+  return crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT, rel))).digest('hex').slice(0, 10);
+}
+const CSS_V = assetHash(ASSET_CSS);
+const JS_V = assetHash(ASSET_JS);
+function bustAssets(html) {
+  return html
+    .split(ASSET_CSS).join(ASSET_CSS + '?v=' + CSS_V)
+    .split(ASSET_JS).join(ASSET_JS + '?v=' + JS_V);
+}
 
 function parseFM(raw) {
   const m = raw.match(/^---\s*\r?\n([\s\S]*?)\r?\n---/);
@@ -247,7 +267,7 @@ function main() {
 
   // Generate article pages
   posts.forEach((p) => {
-    write(path.join(ROOT, 'posts', p.slug + '.html'), renderPost(p, p.slug, posts));
+    write(path.join(ROOT, 'posts', p.slug + '.html'), bustAssets(renderPost(p, p.slug, posts)));
   });
   console.log(`Built ${posts.length} article page(s).`);
 
@@ -258,9 +278,11 @@ function main() {
   const homeCards = posts.slice(0, 4).map((p) => cardHtml(p, '')).join('\n');
   write(
     OUT_INDEX,
-    read(TPL)
-      .replace('<!-- TOPIC_POSTS -->', topicCards)
-      .replace('<!-- POSTS -->', homeCards)
+    bustAssets(
+      read(TPL)
+        .replace('<!-- TOPIC_POSTS -->', topicCards)
+        .replace('<!-- POSTS -->', homeCards)
+    )
   );
   console.log('Rebuilt index.html grid.');
 
@@ -274,7 +296,7 @@ function main() {
       .split('{{TITLE}}').join(key)
       .split('{{DESC}}').join(c.desc)
       .replace('<!-- POSTS -->', cards || '<p class="text-muted">该分类下还没有文章。</p>');
-    write(path.join(ROOT, 'category', c.slug + '.html'), html);
+    write(path.join(ROOT, 'category', c.slug + '.html'), bustAssets(html));
   });
   console.log(`Built ${Object.keys(CATEGORIES).length} category page(s).`);
 
@@ -284,8 +306,13 @@ function main() {
     .split('{{TITLE}}').join('全部文章')
     .split('{{DESC}}').join('这里收录 Jeff 写过的所有文章，按时间倒序排列。')
     .replace('<!-- POSTS -->', archCards);
-  write(path.join(ROOT, 'archive.html'), archHtml);
+  write(path.join(ROOT, 'archive.html'), bustAssets(archHtml));
   console.log('Built archive.html.');
+
+  // about.html is a static page (not generated from a template); keep its asset
+  // references versioned too so it also benefits from cache-busting.
+  write(path.join(ROOT, 'about.html'), bustAssets(read(path.join(ROOT, 'about.html'))));
+  console.log('Re-wrote about.html with versioned asset URLs.');
 }
 
 main();
