@@ -226,30 +226,12 @@ ${relatedHtml}
 </html>`;
 }
 
-function linkItemHtml(p, base) {
-  const a = p.data;
-  const cat = a.category || '笔记';
-  const href = base + 'posts/' + p.slug + '.html';
-  return `<li><a href="${href}"><span class="link-title">${a.title || p.slug}</span><span class="link-meta">${p.date}</span></a></li>`;
-}
-
-function topicGroupHtml(key, c, posts, base) {
-  const list = posts.filter((p) => (p.data.category || '') === key).slice(0, 3);
-  const items = list.length
-    ? list.map((p) => linkItemHtml(p, base)).join('\n')
-    : '<li class="topic-empty"><span class="link-title">该主题下暂无文章</span></li>';
-  return `    <article class="topic-group reveal">
-      <div class="topic-group-header">
-        <div class="topic-group-info">
-          <h3>${key}</h3>
-          <p>${c.desc}</p>
-        </div>
-        <a class="topic-link" href="${base}category/${c.slug}.html">查看全部 →</a>
-      </div>
-      <ul class="topic-articles">
-${items}
-      </ul>
-    </article>`;
+function topicCardHtml(key, c, base) {
+  return `    <a href="${base}category/${c.slug}.html" class="topic-card reveal">
+      <h3>${key}</h3>
+      <p>${c.desc}</p>
+      <span class="topic-link">查看全部 →</span>
+    </a>`;
 }
 function main() {
   if (!fs.existsSync(POSTS_DIR)) { console.log('No posts/ dir, nothing to build.'); process.exit(0); }
@@ -267,15 +249,15 @@ function main() {
   });
   console.log(`Built ${posts.length} article page(s).`);
 
-  // Topic groups (help-center style) + latest 4 posts
-  const topicGroups = Object.keys(CATEGORIES)
-    .map((key) => topicGroupHtml(key, CATEGORIES[key], posts, ''))
+  // Topic cards (Reolink Popular Service style) + latest 4 posts
+  const topicCards = Object.keys(CATEGORIES)
+    .map((key) => topicCardHtml(key, CATEGORIES[key], ''))
     .join('\n\n');
   const homeCards = posts.slice(0, 4).map((p) => cardHtml(p, '')).join('\n');
   write(
     OUT_INDEX,
     read(TPL)
-      .replace('<!-- TOPIC_POSTS -->', topicGroups)
+      .replace('<!-- TOPIC_POSTS -->', topicCards)
       .replace('<!-- POSTS -->', homeCards)
   );
   console.log('Rebuilt index.html grid.');
