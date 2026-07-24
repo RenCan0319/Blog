@@ -25,12 +25,14 @@
     </div>
   </header>
 
-  <!-- 主视觉 -->
-  <section class="hero container">
-    <span class="eyebrow">Jeff · 写作与笔记</span>
-    <h1 class="display">客服、云，<br>与一点随想。</h1>
-    <p class="lead">我是 Jeff，一名支持工程师。这里记录 Zendesk、Amazon Connect 的实践，以及工作之外的思考。</p>
-    <div class="hero-actions">
+  <!-- 主视觉（落地页：背景动效 + 文字入场） -->
+  <section class="hero container" id="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+    <span class="eyebrow hero-anim">Jeff · 写作与笔记</span>
+    <h1 class="display" id="heroTitle">客服、云，<br>与一点随想。</h1>
+    <p class="lead hero-anim">我是 Jeff，一名支持工程师。这里记录 Zendesk、Amazon Connect 的实践，以及工作之外的思考。</p>
+    <div class="hero-actions hero-anim">
       <a href="#topics" class="btn btn-primary btn-lg">按主题浏览</a>
       <a href="#latest" class="btn btn-secondary btn-lg">读最新文章</a>
     </div>

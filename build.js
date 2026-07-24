@@ -227,7 +227,9 @@ ${relatedHtml}
 }
 
 function topicCardHtml(key, c, base) {
+  const initial = key.trim().charAt(0);
   return `    <a href="${base}category/${c.slug}.html" class="topic-card reveal">
+      <span class="topic-badge">${initial}</span>
       <h3>${key}</h3>
       <p>${c.desc}</p>
       <span class="topic-link">查看全部 →</span>
