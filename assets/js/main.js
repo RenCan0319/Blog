@@ -173,12 +173,19 @@
           io.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
     reveals.forEach(function (el, i) {
       el.classList.add('reveal-init');   // 隐藏，待进入视口再淡入
       el.style.transitionDelay = (Math.min(i, 6) * 60) + 'ms';
       io.observe(el);
     });
+    // 安全网：阈值/极长元素等极端情况下，若观察器未触发，超时后强制显示，
+    // 避免内容（尤其正文这类核心阅读区）永久停留在隐藏态。
+    setTimeout(function () {
+      reveals.forEach(function (el) {
+        if (el.classList.contains('reveal-init')) showReveal(el);
+      });
+    }, 1500);
   } else {
     reveals.forEach(showReveal);
   }

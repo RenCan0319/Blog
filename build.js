@@ -277,7 +277,7 @@ ${cards}
       </div>
     </div>
     <img class="post-cover reveal" src="${coverSrc}" alt="${a.title || ''}" loading="lazy" />
-    <div class="post-body reveal">${bodyHtml}</div>
+    <div class="post-body">${bodyHtml}</div>
     <div class="post-tags reveal">${tagsFor(p).map((t) => `<a class="badge" href="../tag/${slugifyTag(t)}.html">${t}</a>`).join('')}</div>
     <hr class="divider mt-40 mb-24" />
     <div class="flex items-center justify-between reveal">
