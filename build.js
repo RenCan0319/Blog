@@ -22,11 +22,35 @@ const CAT_TPL = path.join(ROOT, 'category.template.html');
 const OUT_INDEX = path.join(ROOT, 'index.html');
 
 // Category metadata (must match the `category:` values in posts/*.md)
+// `seed` drives a stable third-party cover image (Picsum) per category.
 const CATEGORIES = {
-  'Zendesk':        { slug: 'zendesk',        desc: '梳理支持工作流、触发器与自动化，把工单系统真正用对。' },
-  'Amazon Connect': { slug: 'amazon-connect', desc: '云端联络中心与 Customer Profiles，把分散的数据拼成完整的人。' },
-  '随想':           { slug: 'musings',        desc: '工作之外的思考——效率、节奏，与一点人生观察。' },
+  'Zendesk':        { slug: 'zendesk',        seed: 'jeff-zendesk',
+    desc: '梳理支持工作流、触发器与自动化，把工单系统真正用对。' },
+  'Amazon Connect': { slug: 'amazon-connect', seed: 'jeff-amazon',
+    desc: '云端联络中心与 Customer Profiles，把分散的数据拼成完整的人。' },
+  '随想':           { slug: 'musings',        seed: 'jeff-musings',
+    desc: '工作之外的思考——效率、节奏，与一点人生观察。' },
+  '工程笔记':       { slug: 'engineering',    seed: 'jeff-engineering',
+    desc: '从会话到数据湖，记录踩过的坑与落地的管道。' },
 };
+
+// Third-party cover image. Honour an explicit http(s) `cover`, otherwise derive
+// a stable, attractive photo from the post slug (Picsum).
+function coverFor(slug, explicit) {
+  const c = (explicit || '').trim();
+  if (/^https?:\/\//i.test(c)) return c;
+  return `https://picsum.photos/seed/jeff-${slug}/1600/900`;
+}
+
+// Tags: explicit `tags` field (comma/中文逗号 separated), falling back to the
+// category so every post is reachable from both a category and a tag page.
+function tagsFor(p) {
+  const raw = (p.data.tags || '').trim();
+  const out = raw ? raw.split(/[,，]/).map((s) => s.trim()).filter(Boolean) : [];
+  const cat = (p.data.category || '').trim();
+  if (cat && !out.includes(cat)) out.unshift(cat);
+  return out;
+}
 
 const read = (f) => fs.readFileSync(f, 'utf8');
 const write = (f, c) => { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, c); };
@@ -135,21 +159,36 @@ function readingMinutes(body) {
 function cardHtml(p, base) {
   const a = p.data;
   const cat = a.category || '笔记';
-  const catSlug = CATEGORIES[cat] ? CATEGORIES[cat].slug : '';
-  let cover = (a.cover || '').replace(/^\//, '').trim();
-  if (!cover && catSlug) cover = `assets/img/${catSlug}.jpg`;
-  const coverSrc = base + cover;
+  const coverSrc = coverFor(p.slug, a.cover);
   const mins = readingMinutes(p.body);
   const href = base + 'posts/' + p.slug + '.html';
-  return `      <a href="${href}" class="card" style="display:block">
-        <img class="card-cover" src="${coverSrc}" alt="${a.title || ''}" loading="lazy" />
+  return `      <a href="${href}" class="card reveal">
+        <div class="card-media"><img class="card-cover" src="${coverSrc}" alt="${a.title || ''}" loading="lazy" /></div>
         <div class="card-body">
           <span class="badge">${cat}</span>
           <h3 class="card-title">${a.title || ''}</h3>
           <p class="card-excerpt">${a.excerpt || ''}</p>
-          <div class="post-meta mt-16"><span class="avatar">${(a.author || 'Jeff')[0].toUpperCase()}</span><span>${a.author || 'Jeff'} · ${p.date} · ${mins} 分钟</span></div>
+          <div class="post-meta card-meta"><span class="avatar">${(a.author || 'Jeff')[0].toUpperCase()}</span><span>${a.author || 'Jeff'} · ${p.date} · ${mins} 分钟</span></div>
         </div>
       </a>`;
+}
+
+// Large "featured" card for the home page.
+function featuredHtml(p, base) {
+  const a = p.data;
+  const cat = a.category || '笔记';
+  const coverSrc = coverFor(p.slug, a.cover);
+  const mins = readingMinutes(p.body);
+  const href = base + 'posts/' + p.slug + '.html';
+  return `    <a href="${href}" class="featured reveal">
+      <div class="featured-media"><img class="featured-cover" src="${coverSrc}" alt="${a.title || ''}" loading="lazy" /></div>
+      <div class="featured-body">
+        <span class="badge">${cat}</span>
+        <h2>${a.title || ''}</h2>
+        <p class="card-excerpt">${a.excerpt || ''}</p>
+        <div class="post-meta"><span class="avatar">${(a.author || 'Jeff')[0].toUpperCase()}</span><span>${a.author || 'Jeff'} · ${p.date} · ${mins} 分钟阅读</span></div>
+      </div>
+    </a>`;
 }
 
 function renderPost(p, slug, allPosts) {
@@ -158,9 +197,7 @@ function renderPost(p, slug, allPosts) {
   const avatar = (author[0] || 'J').toUpperCase();
   const cat = a.category || '笔记';
   const catSlug = CATEGORIES[cat] ? CATEGORIES[cat].slug : '';
-  let cover = (a.cover || '').replace(/^\//, '').trim();
-  if (!cover && catSlug) cover = `assets/img/${catSlug}.jpg`;
-  const coverSrc = '../' + cover;
+  const coverSrc = '../' + coverFor(p.slug, a.cover);
   const date = fmtDate(a.date);
   const mins = readingMinutes(p.body);
   // Decap CMS markdown body -> HTML; existing HTML-rich posts pass through.
@@ -192,6 +229,9 @@ ${cards}
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${a.title || slug} — Jeff</title>
   <meta name="description" content="${a.excerpt || ''}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/styles.css" />
 </head>
 <body>
@@ -222,7 +262,7 @@ ${cards}
     </div>
     <img class="post-cover reveal" src="${coverSrc}" alt="${a.title || ''}" loading="lazy" />
     <div class="post-body reveal">${bodyHtml}</div>
-    <div class="post-tags reveal"><span class="badge">${cat}</span></div>
+    <div class="post-tags reveal">${tagsFor(p).map((t) => `<a class="badge" href="../tag/${encodeURIComponent(t)}.html">${t}</a>`).join('')}</div>
     <hr class="divider mt-40 mb-24" />
     <div class="flex items-center justify-between reveal">
       <div class="post-meta"><span class="avatar">${avatar}</span><span>${author}</span></div>
@@ -261,9 +301,8 @@ ${relatedHtml}
 }
 
 function topicCardHtml(key, c, base) {
-  const initial = key.trim().charAt(0);
-  return `    <a href="${base}category/${c.slug}.html" class="topic-card reveal">
-      <span class="topic-badge">${initial}</span>
+  const img = `https://picsum.photos/seed/${c.seed}/800/600`;
+  return `    <a href="${base}category/${c.slug}.html" class="topic-card reveal" style="--topic-img:url('${img}')">
       <h3>${key}</h3>
       <p>${c.desc}</p>
       <span class="topic-link">查看全部 →</span>
@@ -285,20 +324,22 @@ function main() {
   });
   console.log(`Built ${posts.length} article page(s).`);
 
-  // Topic cards (Reolink Popular Service style) + latest 4 posts
+  // Topic cards (image cards) + featured latest post + remaining grid
   const topicCards = Object.keys(CATEGORIES)
     .map((key) => topicCardHtml(key, CATEGORIES[key], ''))
     .join('\n\n');
-  const homeCards = posts.slice(0, 4).map((p) => cardHtml(p, '')).join('\n');
+  const featured = posts.length ? featuredHtml(posts[0], '') : '';
+  const homeCards = posts.slice(1, 7).map((p) => cardHtml(p, '')).join('\n');
   write(
     OUT_INDEX,
     bustAssets(
       read(TPL)
         .replace('<!-- TOPIC_POSTS -->', topicCards)
+        .replace('<!-- FEATURED -->', featured)
         .replace('<!-- POSTS -->', homeCards)
     )
   );
-  console.log('Rebuilt index.html grid.');
+  console.log('Rebuilt index.html (hero + featured + grid).');
 
   // Category pages + archive (reuse category template; archive strips the ../ prefix)
   const catTpl = read(CAT_TPL);
@@ -309,16 +350,45 @@ function main() {
     const html = catTpl
       .split('{{TITLE}}').join(key)
       .split('{{DESC}}').join(c.desc)
+      .split('{{IMG}}').join(`https://picsum.photos/seed/${c.seed}/1600/700`)
       .replace('<!-- POSTS -->', cards || '<p class="text-muted">该分类下还没有文章。</p>');
     write(path.join(ROOT, 'category', c.slug + '.html'), bustAssets(html));
   });
   console.log(`Built ${Object.keys(CATEGORIES).length} category page(s).`);
+
+  // Tag pages: a tags.html index + one page per unique tag.
+  const tagCount = new Map();
+  posts.forEach((p) => tagsFor(p).forEach((t) => tagCount.set(t, (tagCount.get(t) || 0) + 1)));
+  const tagNames = Array.from(tagCount.keys());
+  const tagCloud = tagNames
+    .map((t) => `<a href="tag/${encodeURIComponent(t)}.html">${t}<span class="count">${tagCount.get(t)}</span></a>`)
+    .join('\n');
+  const tagsHtml = catTpl
+    .split('{{TITLE}}').join('标签')
+    .split('{{DESC}}').join('按主题或关键词检索，找到你想读的那一篇。')
+    .split('{{IMG}}').join('https://picsum.photos/seed/jeff-tags/1600/700')
+    .replace('<!-- POSTS -->', `<div class="tag-cloud mt-24">${tagCloud}</div>`);
+  write(path.join(ROOT, 'tags.html'), bustAssets(tagsHtml));
+  console.log('Built tags.html.');
+
+  tagNames.forEach((t) => {
+    const list = posts.filter((p) => tagsFor(p).includes(t));
+    const cards = list.map((p) => cardHtml(p, '../')).join('\n');
+    const html = catTpl
+      .split('{{TITLE}}').join(t)
+      .split('{{DESC}}').join(`标签「${t}」下的文章，共 ${list.length} 篇。`)
+      .split('{{IMG}}').join(`https://picsum.photos/seed/jeff-${encodeURIComponent(t)}/1600/700`)
+      .replace('<!-- POSTS -->', cards || '<p class="text-muted">该标签下还没有文章。</p>');
+    write(path.join(ROOT, 'tag', encodeURIComponent(t) + '.html'), bustAssets(html));
+  });
+  console.log(`Built ${tagNames.length} tag page(s).`);
 
   const archTpl = catTpl.split('../').join('');
   const archCards = posts.map((p) => cardHtml(p, '')).join('\n');
   const archHtml = archTpl
     .split('{{TITLE}}').join('全部文章')
     .split('{{DESC}}').join('这里收录 Jeff 写过的所有文章，按时间倒序排列。')
+    .split('{{IMG}}').join('https://picsum.photos/seed/jeff-archive/1600/700')
     .replace('<!-- POSTS -->', archCards);
   write(path.join(ROOT, 'archive.html'), bustAssets(archHtml));
   console.log('Built archive.html.');

@@ -3,6 +3,7 @@
 /index.html
 archive.html
 category/
+tag/
 posts/*.html
 
 # ===== 死文件 / 内部目录 =====
