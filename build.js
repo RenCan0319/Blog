@@ -212,7 +212,8 @@ function renderPost(p, slug, allPosts) {
   const avatar = (author[0] || 'J').toUpperCase();
   const cat = a.category || '笔记';
   const catSlug = CATEGORIES[cat] ? CATEGORIES[cat].slug : '';
-  const coverSrc = '../' + coverFor(p.slug, a.cover);
+  const cover = coverFor(p.slug, a.cover);
+  const coverSrc = cover.startsWith('http') ? cover : '../' + cover;
   const date = fmtDate(a.date);
   const mins = readingMinutes(p.body);
   // Decap CMS markdown body -> HTML; existing HTML-rich posts pass through.
