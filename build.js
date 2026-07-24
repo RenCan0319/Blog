@@ -23,9 +23,9 @@ const OUT_INDEX = path.join(ROOT, 'index.html');
 
 // Category metadata (must match the `category:` values in posts/*.md)
 const CATEGORIES = {
-  'Zendesk':        { slug: 'zendesk',        desc: '支持工作流、触发器与自动化，把工单系统真正用对。' },
-  'Amazon Connect': { slug: 'amazon-connect', desc: '云联络中心与 Customer Profiles，把分散的数据拼成一个人。' },
-  '随想':           { slug: 'musings',        desc: '工作之外的思考：效率、节奏，与一点点人生观察。' },
+  'Zendesk':        { slug: 'zendesk',        desc: '梳理支持工作流、触发器与自动化，把工单系统真正用对。' },
+  'Amazon Connect': { slug: 'amazon-connect', desc: '云端联络中心与 Customer Profiles，把分散的数据拼成完整的人。' },
+  '随想':           { slug: 'musings',        desc: '工作之外的思考——效率、节奏，与一点人生观察。' },
 };
 
 const read = (f) => fs.readFileSync(f, 'utf8');
@@ -98,7 +98,7 @@ function buildSections(body) {
       const id = 's' + secN;
       const title = s.head.replace(/<[^>]+>/g, '').trim();
       toc.push({ id, title });
-      out += `<section class="section-block" id="${id}"><div class="sec-eyebrow"><span class="sec-num">${String(secN).padStart(2, '0')}</span>板块</div><h2>${s.head}</h2>`;
+      out += `<section class="section-block" id="${id}"><div class="sec-eyebrow"><span class="sec-num">${String(secN).padStart(2, '0')}</span> 节</div><h2>${s.head}</h2>`;
       open = true;
     }
   }
@@ -232,7 +232,7 @@ ${relatedHtml}
   <div class="modal-overlay" id="shareModal" style="display:none">
     <div class="modal" role="dialog" aria-modal="true">
       <h3>分享这篇文章</h3>
-      <p class="text-muted">复制下面的链接，发给想看的人。</p>
+      <p class="text-muted">复制下方链接，分享给想读的人即可。</p>
       <div class="field-row mt-16">
         <input class="input" id="shareUrl" value="https://employless.cc.cd/posts/${slug}.html" readonly />
         <button class="btn btn-primary" onclick="copyShare()">复制</button>
