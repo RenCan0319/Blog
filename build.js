@@ -25,7 +25,6 @@ const CATEGORIES = {
   'Zendesk':        { slug: 'zendesk',        desc: '支持工作流、触发器与自动化，把工单系统真正用对。' },
   'Amazon Connect': { slug: 'amazon-connect', desc: '云联络中心与 Customer Profiles，把分散的数据拼成一个人。' },
   '随想':           { slug: 'musings',        desc: '工作之外的思考：效率、节奏，与一点点人生观察。' },
-  '工程笔记':       { slug: 'engineering',    desc: '架构、管道与踩坑记录，从工单事件到数据湖。' },
 };
 
 const read = (f) => fs.readFileSync(f, 'utf8');
@@ -49,6 +48,7 @@ function parseFM(raw) {
 }
 
 function fmtDate(iso) {
+  if (!iso) return '1970-01-01';
   const d = new Date(iso);
   return isNaN(d) ? iso : d.toISOString().slice(0, 10);
 }
@@ -166,7 +166,7 @@ ${cards}
       <a href="../index.html" class="brand"><span class="mark">J</span>Jeff</a>
       <nav class="nav-links" id="navLinks">
         <a href="../index.html" class="nav-link">首页</a>
-        <a href="../index.html#writing" class="nav-link">文章</a>
+        <a href="../index.html#latest" class="nav-link">文章</a>
         <a href="../about.html" class="nav-link">关于</a>
       </nav>
       <div class="nav-right">
@@ -177,7 +177,7 @@ ${cards}
   </header>
 
   <article class="section-sm container read-col">
-    <a href="../index.html#writing" class="nav-link reveal" style="display:inline-block;margin-bottom:24px">← 返回文章</a>
+    <a href="../index.html#latest" class="nav-link reveal" style="display:inline-block;margin-bottom:24px">← 返回文章</a>
     <div class="reveal">
       <span class="badge">${cat}</span>
       <h1 style="margin-top:14px;font-family:var(--font-serif)">${a.title || ''}</h1>
@@ -226,6 +226,31 @@ ${relatedHtml}
 </html>`;
 }
 
+function linkItemHtml(p, base) {
+  const a = p.data;
+  const cat = a.category || '笔记';
+  const href = base + 'posts/' + p.slug + '.html';
+  return `<li><a href="${href}"><span class="link-title">${a.title || p.slug}</span><span class="link-meta">${p.date}</span></a></li>`;
+}
+
+function topicGroupHtml(key, c, posts, base) {
+  const list = posts.filter((p) => (p.data.category || '') === key).slice(0, 3);
+  const items = list.length
+    ? list.map((p) => linkItemHtml(p, base)).join('\n')
+    : '<li class="topic-empty"><span class="link-title">该主题下暂无文章</span></li>';
+  return `    <article class="topic-group reveal">
+      <div class="topic-group-header">
+        <div class="topic-group-info">
+          <h3>${key}</h3>
+          <p>${c.desc}</p>
+        </div>
+        <a class="topic-link" href="${base}category/${c.slug}.html">查看全部 →</a>
+      </div>
+      <ul class="topic-articles">
+${items}
+      </ul>
+    </article>`;
+}
 function main() {
   if (!fs.existsSync(POSTS_DIR)) { console.log('No posts/ dir, nothing to build.'); process.exit(0); }
   const files = fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith('.md'));
@@ -242,9 +267,17 @@ function main() {
   });
   console.log(`Built ${posts.length} article page(s).`);
 
-  // Home grid
-  const homeCards = posts.map((p) => cardHtml(p, '')).join('\n');
-  write(OUT_INDEX, read(TPL).replace('<!-- POSTS -->', homeCards));
+  // Topic groups (help-center style) + latest 4 posts
+  const topicGroups = Object.keys(CATEGORIES)
+    .map((key) => topicGroupHtml(key, CATEGORIES[key], posts, ''))
+    .join('\n\n');
+  const homeCards = posts.slice(0, 4).map((p) => cardHtml(p, '')).join('\n');
+  write(
+    OUT_INDEX,
+    read(TPL)
+      .replace('<!-- TOPIC_POSTS -->', topicGroups)
+      .replace('<!-- POSTS -->', homeCards)
+  );
   console.log('Rebuilt index.html grid.');
 
   // Category pages + archive (reuse category template; archive strips the ../ prefix)

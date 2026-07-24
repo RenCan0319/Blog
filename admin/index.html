@@ -36,12 +36,12 @@
             delete: true,
             fields: [
               { name: "title", label: "标题", widget: "string" },
-              { name: "date", label: "发布日期", widget: "date", format: "YYYY-MM-DD" },
+              { name: "date", label: "发布日期", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, picker_utc: false, default: "" },
               {
                 name: "category",
                 label: "分类",
                 widget: "select",
-                options: ["Zendesk", "Amazon Connect", "随想", "工程笔记"]
+                options: ["Zendesk", "Amazon Connect", "随想"]
               },
               { name: "cover", label: "封面图", widget: "image", required: false },
               { name: "excerpt", label: "摘要", widget: "text" },
