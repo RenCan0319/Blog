@@ -1,4 +1,4 @@
-// Jeff Blog — main.js
+// 熵 Blog — main.js
 // Theme toggle (persisted), mobile nav, back-to-top, share modal.
 
 (function () {
@@ -8,7 +8,7 @@
   var root = document.documentElement;
   var toggle = document.getElementById('themeToggle');
   var saved = null;
-  try { saved = localStorage.getItem('jeff-theme'); } catch (e) {}
+  try { saved = localStorage.getItem('shang-theme'); } catch (e) {}
   if (saved) {
     root.setAttribute('data-theme', saved);
   } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -22,7 +22,7 @@
     toggle.addEventListener('click', function () {
       var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       root.setAttribute('data-theme', next);
-      try { localStorage.setItem('jeff-theme', next); } catch (e) {}
+      try { localStorage.setItem('shang-theme', next); } catch (e) {}
       syncIcon();
     });
   }

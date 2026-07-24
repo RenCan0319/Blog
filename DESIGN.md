@@ -1,4 +1,4 @@
-# DESIGN.md — Jeff
+# DESIGN.md — 熵
 
 > Personal blog of Jeff. Apple-inspired: calm, precise, content-first. Built for Cloudflare Pages (static).
 > Topics: Zendesk · Amazon Connect Customer Profiles · 随想 (musings) · 工程笔记 (engineering notes).

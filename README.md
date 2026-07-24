@@ -1,4 +1,4 @@
-# Jeff 的个人博客
+# 熵 的个人博客
 
 Apple 风格的个人博客（纯静态），文章聚焦 **Zendesk / Amazon Connect Customer Profiles / 随想 / 工程笔记**。
 支持分板块长文、按主题浏览、暗色模式，并内置 **Decap CMS** 作为内容后台。

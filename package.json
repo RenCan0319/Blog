@@ -1,8 +1,8 @@
 {
-  "name": "jeff-blog",
+  "name": "shang-blog",
   "version": "1.0.0",
   "private": true,
-  "description": "Jeff 的个人博客 — Apple 风格静态站，含 Decap CMS 后台",
+  "description": "熵 的个人博客 — Apple 风格静态站，含 Decap CMS 后台",
   "scripts": {
     "build": "node build.js",
     "preview": "npx --yes serve .",

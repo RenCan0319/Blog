@@ -1,6 +1,6 @@
 # 部署到 Cloudflare Pages
 
-Jeff 是一个静态站点（HTML + CSS + JS）。内容由 `posts/*.md` 经 `build.js` 生成，编辑文章通过 **Decap CMS** 后台完成。
+熵 是一个静态站点（HTML + CSS + JS）。内容由 `posts/*.md` 经 `build.js` 生成，编辑文章通过 **Decap CMS** 后台完成。
 
 ## 目录结构
 

@@ -1,5 +1,5 @@
 /* ============================================================
-   Jeff — styles.css
+   熵 — styles.css
    美观优先 · 编辑式排版
    暖调纸感底色 + 单一克制陶土强调色 + 衬线/无衬线对比
    Fraunces（拉丁标题） + Noto Serif SC（中文标题）
@@ -119,6 +119,8 @@ h4 { font-size: 1.0625rem; }
   background: var(--accent); color: var(--on-accent);
   display: grid; place-items: center; font-size: .95rem; font-weight: 700;
   font-family: var(--font-sans); box-shadow: var(--shadow-sm); }
+.brand-logo { width: 30px; height: 30px; border-radius: 9px; object-fit: contain; flex: none;
+  background: var(--surface); box-shadow: var(--shadow-sm); }
 .nav-links { display: flex; align-items: center; gap: 32px; }
 .nav-link { color: var(--ink-soft); font-size: .9375rem; padding: 8px 2px; position: relative;
   transition: color .15s ease; }
