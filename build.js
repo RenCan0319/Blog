@@ -324,12 +324,12 @@ function main() {
   });
   console.log(`Built ${posts.length} article page(s).`);
 
-  // Topic cards (image cards) + featured latest post + remaining grid
+  // Topic cards (image cards) + exactly the 4 latest posts: 1 featured + next 3 grid cards
   const topicCards = Object.keys(CATEGORIES)
     .map((key) => topicCardHtml(key, CATEGORIES[key], ''))
     .join('\n\n');
   const featured = posts.length ? featuredHtml(posts[0], '') : '';
-  const homeCards = posts.slice(1, 7).map((p) => cardHtml(p, '')).join('\n');
+  const homeCards = posts.slice(1, 4).map((p) => cardHtml(p, '')).join('\n');
   write(
     OUT_INDEX,
     bustAssets(
