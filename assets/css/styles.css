@@ -211,7 +211,7 @@ h4 { font-size: 1.0625rem; }
   color: var(--ink); box-shadow: var(--shadow-sm);
   transition: transform .28s var(--ease-out), box-shadow .28s var(--ease-out), border-color .2s ease; }
 .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: color-mix(in oklab, var(--accent) 30%, var(--border)); color: var(--ink); }
-.card-cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--surface-2); }
+.card-cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; object-position: center; background: var(--surface-2); }
 .card-body { padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .card-title { font-size: 1.1875rem; line-height: 1.32; margin: 0; }
 .card:hover .card-title { color: var(--ink); }
@@ -231,8 +231,10 @@ h4 { font-size: 1.0625rem; }
 .category-header .lead { max-width: 640px; }
 
 /* ---------- Post article ---------- */
-.post-cover { width: 100%; aspect-ratio: 21/9; object-fit: cover; border-radius: var(--radius);
+.post-cover { width: 100%; aspect-ratio: 21/9; object-fit: cover; object-position: center; border-radius: var(--radius);
   margin: clamp(24px, 4vw, 40px) 0; box-shadow: var(--shadow-sm); }
+.about-avatar { width: clamp(120px, 18vw, 180px); aspect-ratio: 1 / 1; object-fit: cover; object-position: center;
+  border-radius: 50%; margin: 28px 0 10px; border: 3px solid var(--surface); box-shadow: var(--shadow-md); }
 .post-body { font-size: 1.0625rem; line-height: 1.75; color: var(--ink-soft); }
 .post-body h2 { font-family: var(--font-serif); font-size: clamp(1.5rem, 3vw, 1.9rem); margin: 48px 0 16px; color: var(--ink); }
 .post-body h3 { margin: 34px 0 12px; color: var(--ink); }

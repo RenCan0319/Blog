@@ -33,21 +33,35 @@ const write = (f, c) => { fs.mkdirSync(path.dirname(f), { recursive: true }); fs
 
 // ---- Cache-busting for static assets ----
 // /assets/* is served with `Cache-Control: immutable` (see _headers), so the
-// browser/CDN never revalidates a given URL. To make CSS/JS updates take effect,
-// we append a content hash as a query string (?v=...). When the file changes the
-// hash changes -> the URL changes -> clients fetch the new file; unchanged files
-// keep their year-long immutable cache.
-const ASSET_CSS = 'assets/css/styles.css';
-const ASSET_JS = 'assets/js/main.js';
+// browser/CDN never revalidates a given URL. To make CSS/JS/image updates take
+// effect, we append a content hash as a query string (?v=...). When the file
+// changes the hash changes -> the URL changes -> clients fetch the new file;
+// unchanged files keep their year-long immutable cache.
 function assetHash(rel) {
   return crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT, rel))).digest('hex').slice(0, 10);
 }
-const CSS_V = assetHash(ASSET_CSS);
-const JS_V = assetHash(ASSET_JS);
+function bustAsset(html, rel) {
+  const h = assetHash(rel);
+  // Escape regex special chars in the filename.
+  const escaped = rel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(escaped + '(\\?v=[^"\\s]*)?', 'g');
+  return html.replace(re, rel + '?v=' + h);
+}
 function bustAssets(html) {
-  return html
-    .split(ASSET_CSS).join(ASSET_CSS + '?v=' + CSS_V)
-    .split(ASSET_JS).join(ASSET_JS + '?v=' + JS_V);
+  // CSS & JS
+  html = bustAsset(html, 'assets/css/styles.css');
+  html = bustAsset(html, 'assets/js/main.js');
+  // Images under assets/img
+  const IMG_DIR = path.join(ROOT, 'assets', 'img');
+  if (fs.existsSync(IMG_DIR)) {
+    fs.readdirSync(IMG_DIR).forEach((f) => {
+      const fp = path.join(IMG_DIR, f);
+      if (fs.statSync(fp).isFile()) {
+        html = bustAsset(html, 'assets/img/' + f);
+      }
+    });
+  }
+  return html;
 }
 
 function parseFM(raw) {
