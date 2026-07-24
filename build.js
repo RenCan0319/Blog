@@ -52,6 +52,21 @@ function tagsFor(p) {
   return out;
 }
 
+// Safe URL/filename slug for a tag. Keeps CJK characters readable, replaces
+// spaces with hyphens, and strips filesystem-invalid characters. We do NOT use
+// encodeURIComponent for filenames: servers decode "%20" back to spaces when
+// looking up files, so a file literally named "Amazon%20Connect.html" would
+// never be matched. Slugs keep URLs and filenames identical.
+function slugifyTag(tag) {
+  return tag
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[\\/:*?"<>|]/g, '')
+    .replace(/^-+|-+$/g, '');
+}
+
 const read = (f) => fs.readFileSync(f, 'utf8');
 const write = (f, c) => { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, c); };
 
@@ -262,7 +277,7 @@ ${cards}
     </div>
     <img class="post-cover reveal" src="${coverSrc}" alt="${a.title || ''}" loading="lazy" />
     <div class="post-body reveal">${bodyHtml}</div>
-    <div class="post-tags reveal">${tagsFor(p).map((t) => `<a class="badge" href="../tag/${encodeURIComponent(t)}.html">${t}</a>`).join('')}</div>
+    <div class="post-tags reveal">${tagsFor(p).map((t) => `<a class="badge" href="../tag/${slugifyTag(t)}.html">${t}</a>`).join('')}</div>
     <hr class="divider mt-40 mb-24" />
     <div class="flex items-center justify-between reveal">
       <div class="post-meta"><span class="avatar">${avatar}</span><span>${author}</span></div>
@@ -361,7 +376,7 @@ function main() {
   posts.forEach((p) => tagsFor(p).forEach((t) => tagCount.set(t, (tagCount.get(t) || 0) + 1)));
   const tagNames = Array.from(tagCount.keys());
   const tagCloud = tagNames
-    .map((t) => `<a href="tag/${encodeURIComponent(t)}.html">${t}<span class="count">${tagCount.get(t)}</span></a>`)
+    .map((t) => `<a href="tag/${slugifyTag(t)}.html">${t}<span class="count">${tagCount.get(t)}</span></a>`)
     .join('\n');
   const tagsHtml = catTpl
     .split('{{TITLE}}').join('标签')
@@ -377,9 +392,9 @@ function main() {
     const html = catTpl
       .split('{{TITLE}}').join(t)
       .split('{{DESC}}').join(`标签「${t}」下的文章，共 ${list.length} 篇。`)
-      .split('{{IMG}}').join(`https://picsum.photos/seed/jeff-${encodeURIComponent(t)}/1600/700`)
+      .split('{{IMG}}').join(`https://picsum.photos/seed/jeff-${slugifyTag(t)}/1600/700`)
       .replace('<!-- POSTS -->', cards || '<p class="text-muted">该标签下还没有文章。</p>');
-    write(path.join(ROOT, 'tag', encodeURIComponent(t) + '.html'), bustAssets(html));
+    write(path.join(ROOT, 'tag', slugifyTag(t) + '.html'), bustAssets(html));
   });
   console.log(`Built ${tagNames.length} tag page(s).`);
 
