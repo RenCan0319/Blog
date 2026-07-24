@@ -359,8 +359,11 @@ h4 { font-size: 1.0625rem; }
 .mb-8 { margin-bottom: 8px; } .mb-16 { margin-bottom: 16px; } .mb-24 { margin-bottom: 24px; }
 .text-muted { color: var(--muted); } .text-center { text-align: center; }
 
-/* ---------- 滚动入场 ---------- */
-.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+/* ---------- 滚动入场（渐进增强） ---------- */
+/* 默认完全可见：即使 main.js 加载失败/被缓存拦截，正文等核心内容依然可读。
+   仅当 JS 成功加载后给元素加 .reveal-init 才进入"先隐藏再淡入"状态。 */
+.reveal { opacity: 1; transform: none; }
+.reveal.reveal-init { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
 .reveal.is-visible { opacity: 1; transform: none; }
 
 /* ---------- Responsive ---------- */

@@ -160,23 +160,26 @@
     }
   }
 
-  // ---- Scroll reveal (entrance, staggered) ----
+  // ---- Scroll reveal (progressive enhancement) ----
+  // 核心内容（正文等）默认在 CSS 中可见；只有 JS 成功加载后才加 .reveal-init
+  // 进入"先隐藏再淡入"状态，从而 JS 失败/被拦截时内容仍可读。
   var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  function showReveal(el) { el.classList.remove('reveal-init'); el.classList.add('is-visible'); }
   if (reveals.length && 'IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
+          showReveal(entry.target);
           io.unobserve(entry.target);
         }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
     reveals.forEach(function (el, i) {
-      // 同组相邻元素轻微错峰
+      el.classList.add('reveal-init');   // 隐藏，待进入视口再淡入
       el.style.transitionDelay = (Math.min(i, 6) * 60) + 'ms';
       io.observe(el);
     });
   } else {
-    reveals.forEach(function (el) { el.classList.add('is-visible'); });
+    reveals.forEach(showReveal);
   }
 })();
